@@ -112,7 +112,7 @@ whether the content is fresh or stale.
 
 The `ETag` header is a `md5` hash of the content of a page and will be calculated with each request.
 1. At the first request this `ETag` is stored by the browser. Furthermore the browser is instructed to validate 
-   resources on the server before use it from the cache by `Cache-Control: no-cache, must-revalidate`
+   resources on the server before use it from the cache by `Cache-Control: no-cache`
 2. At the next request the browser will send the request header `if-none-match`, containing the content of the `ETag` 
    from step 1.
 3. A TYPO3 middleware checks if the `if-none-match` is still equal to the current `ETag` of the content. 
@@ -120,3 +120,8 @@ The `ETag` header is a `md5` hash of the content of a page and will be calculate
      the browser it can retrieve the page from its browser cache.
    - If the content has changed HTTP status code `200 OK` will be send to the browser, instructing the browser to 
      retrieve the page from the web server.
+
+## More info
+
+You can find a great tutorial on Medium by Alex Barashkov: 
+"[Best practices for cache control settings for your website](https://medium.com/pixelpoint/best-practices-for-cache-control-settings-for-your-website-ff262b38c5a2)"
