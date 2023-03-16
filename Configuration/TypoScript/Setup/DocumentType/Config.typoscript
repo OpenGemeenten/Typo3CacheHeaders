@@ -1,0 +1,7 @@
+config {
+    OpenGemeenten\CacheHeaders {
+        pattern = {$extensions.opengemeenten_cacheheaders.cacheHeaders.pattern}
+        replacement = {$extensions.opengemeenten_cacheheaders.cacheHeaders.replacement}
+        sendCacheHeaders = {$extensions.opengemeenten_cacheheaders.cacheHeaders.sendCacheHeaders}
+    }
+}

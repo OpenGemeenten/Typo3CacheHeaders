@@ -1,0 +1,29 @@
+{
+    "name": "opengemeenten/typo3-cache-headers",
+    "type": "typo3-cms-extension",
+    "description": "Frontend caching modifications",
+    "license": "GPL-3.0+",
+    "replace": {
+        "opengemeenten_cacheheaders": "self.version"
+    },
+    "authors": [
+        {
+            "name": "OpenGemeenten",
+            "email": "hallo@opengemeenten.nl",
+            "homepage": "https://www.opengemeenten.nl/"
+        }
+    ],
+    "require": {
+        "typo3/cms-frontend": "^10.4 || ^11.5"
+    },
+    "extra": {
+        "typo3/cms": {
+            "extension-key": "opengemeenten_cacheheaders"
+        }
+    },
+    "autoload": {
+        "psr-4": {
+            "OpenGemeenten\\CacheHeaders\\": "Classes"
+        }
+    }
+}
