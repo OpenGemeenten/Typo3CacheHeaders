@@ -89,11 +89,11 @@ class CacheHeaders implements MiddlewareInterface
             // Browser does not have anything in cache
             } else {
                 $response = $response->withStatus(200);
-
-                // Applying “no-cache” does not mean that there is no cache at all, it simply tells the browser to validate resources on the server before use it from the cache
-                $response = $response->withHeader('cache-control', 'no-cache, must-revalidate');
             }
 
+            // Applying “no-cache” does not mean that there is no cache at all.
+            // it simply tells the browser to validate resources on the server before use it from the cache
+            $response = $response->withHeader('cache-control', 'no-cache');
             $response = $response->withHeader('ETag', $currentETag);
         }
 
