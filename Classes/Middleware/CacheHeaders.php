@@ -20,20 +20,25 @@ class CacheHeaders implements MiddlewareInterface
      * Always the header 'ETag: "<hash>"' will be send
      *
      * Browser does not have page in cache:
+     * Request:
+     *  - GET page.html
+     *
+     * Response:
      * - Return status '200 OK'
-     * - Send header 'cache-control: no-cache, must-revalidate'
-     * - Send header
+     * - Send header 'cache-control: no-cache'
      *
      * When using gzip compression it might be the server is adding a pre- or postfix to the ETag
      *
      * Browser has page in cache
-     * Browser:
+     * Request:
+     * - GET page.html
      * - Sends header 'If-None-Match: "<hash>"' / 'If-None-Match: "<hash>-postfix"'
      *
      * Server:
      * - Checks if ETag is the same as header 'If-None-Match'
      * - Return status '304 Not Modified' if ETag is the same
      * - Return status '200 OK' when ETag has changed (content has changed)
+     * - Send header 'cache-control: no-cache'
      *
      * @param ServerRequestInterface $request
      * @param RequestHandlerInterface $handler
