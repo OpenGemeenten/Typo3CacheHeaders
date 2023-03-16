@@ -118,8 +118,11 @@ The `ETag` header is a `md5` hash of the content of a page and will be calculate
 3. A TYPO3 middleware checks if the `if-none-match` is still equal to the current `ETag` of the content. 
    - If the content is still the same HTTP status code `304, Not Modified` will be send back to the browser, instructing
      the browser it can retrieve the page from its browser cache.
-   - If the content has changed HTTP status code `200 OK` will be send to the browser, instructing the browser to 
+   - If the content has changed HTTP status code `200 OK` will be send to the browser, instructing the browser to
      retrieve the page from the web server.
+
+When the HTTP status code `304, Not Modified` is send, no content will be send, keeping the response very small.
+See`Symfony\Component\HttpFoundation`
 
 ## More info
 
