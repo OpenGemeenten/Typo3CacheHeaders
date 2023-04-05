@@ -7,6 +7,7 @@ use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use TYPO3\CMS\Core\Http\NullResponse;
+use TYPO3\CMS\Core\Http\Response;
 use TYPO3\CMS\Frontend\Controller\TypoScriptFrontendController;
 use function in_array;
 use function md5;
@@ -49,6 +50,8 @@ class CacheHeaders implements MiddlewareInterface
         $response = $handler->handle($request);
 
         if (!($response instanceof NullResponse)
+            && isset($GLOBALS['TSFE']->config['config']['OpenGemeenten\CmsFrontend.']['sendCacheHeaders'])
+            && (bool)$GLOBALS['TSFE']->config['config']['OpenGemeenten\CmsFrontend.']['sendCacheHeaders'] === true
             && $GLOBALS['TSFE'] instanceof TypoScriptFrontendController
             && $GLOBALS['TSFE']->isStaticCacheble()
             && !$GLOBALS['TSFE']->isBackendUserLoggedIn()
@@ -57,8 +60,6 @@ class CacheHeaders implements MiddlewareInterface
                 empty($GLOBALS['TSFE']->config['config']['sendCacheHeaders_onlyWhenLoginDeniedInBranch'])
                 || empty($GLOBALS['TSFE']->checkIfLoginAllowedInBranch())
             )
-            && isset($GLOBALS['TSFE']->config['config']['OpenGemeenten\CacheHeaders.']['sendCacheHeaders'])
-            && (bool)$GLOBALS['TSFE']->config['config']['OpenGemeenten\CacheHeaders.']['sendCacheHeaders'] === true
         ) {
             $configuration = $GLOBALS['TSFE']->config['config'];
 
@@ -69,14 +70,16 @@ class CacheHeaders implements MiddlewareInterface
                 $response = $response->withoutHeader('pragma');
             }
 
-            $currentETag = '"' . md5($GLOBALS['TSFE']->content) . '"';
+            $currentETag = md5($GLOBALS['TSFE']->content);
 
             // Browser sends the header 'if-none-match' with the Etag
             if ($request->hasHeader('if-none-match')) {
                 $oldETags = $request->getHeader('if-none-match');
 
-                $pattern = $configuration['OpenGemeenten\CacheHeaders.']['pattern'] ?? '^("[0-9a-fA-F]*)(\b-gzip\b|)(")$';
-                $replacement = $configuration['OpenGemeenten\CacheHeaders.']['replacement'] ?? '$1$3';
+                // Use only the value of the Etag (W/"<Etag-value>-gzip")
+                // W/ means a weak Etag, -gzip is added by an Apache server when the content is served gzipped
+                $pattern = $configuration['OpenGemeenten\CmsFrontend.']['pattern'] ?? '^([W]\/|)(")([0-9a-fA-F]*)(\b-gzip\b|)(")$';
+                $replacement = $configuration['OpenGemeenten\CmsFrontend.']['replacement'] ?? '$3';
 
                 foreach ($oldETags as $key => $oldETag) {
                     $oldETags[$key] = preg_replace('/' . $pattern . '/', $replacement, $oldETag);
@@ -84,7 +87,7 @@ class CacheHeaders implements MiddlewareInterface
 
                 // If the current Etag is the same as one of the old, return 304, Not Modified
                 if (in_array($currentETag, $oldETags)) {
-                    $response = $response->withStatus(304);
+                    return new Response(null, 304);
 
                 // Else return a 200 OK
                 } else {
@@ -97,9 +100,9 @@ class CacheHeaders implements MiddlewareInterface
             }
 
             // Applying “no-cache” does not mean that there is no cache at all.
-            // it simply tells the browser to validate resources on the server before use it from the cache
+            // It simply tells the browser to validate resources on the server before use it from the cache
             $response = $response->withHeader('cache-control', 'no-cache');
-            $response = $response->withHeader('ETag', $currentETag);
+            $response = $response->withHeader('ETag', '"' . $currentETag . '"');
         }
 
         return $response;

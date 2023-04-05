@@ -88,9 +88,19 @@ of this setting. Related to this is the setting `config.cache_period`, which
 a page can stay in the backend, and therefor in the browser cache.
 
 **FUN FACT:** The provided `.htaccess` file, which comes with the TYPO3 core, is removing the `ETag` cache header
-again. So we are left with the cache headers `Last-Modified`, `Expires`, `Cache-Control` (with `max-age` when the page
+again. 
+```
+# ETag removal
+<IfModule mod_headers.c>
+    Header unset ETag
+</IfModule>
+```
+So we are left with the cache headers `Last-Modified`, `Expires`, `Cache-Control` (with `max-age` when the page
 can be cached) and the deprecated `Pragma`. They probably have done this since the workings of the `Etag` is not fully 
-implemented in the TYPO3 core, like the HTTP status codes of the response.
+implemented in the TYPO3 core, like the HTTP status codes of the response. 
+
+IMPORTANT NOTE: If you are going to use this extension on an Apache webserver, remove or comment the part in the 
+`.htaccess` file where the `ETag` cache header is being removed.
 
 ### What's wrong with this?
 
