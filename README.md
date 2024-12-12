@@ -82,9 +82,9 @@ Now that we know how browser caching works, lets take a look at how TYPO3 handle
 
 Out-of-the-box TYPO3 does not handle browser caching at all. You need to enable it with the TypoScript setting 
 `config.sendCacheHeaders = 1`. The page for the top level TypoScript object `config` 
-[describes the exact behaviour](https://docs.typo3.org/m/typo3/reference-typoscript/main/en-us/Setup/Config/Index.html#sendcacheheaders) 
+[describes the exact behaviour](https://docs.typo3.org/m/typo3/reference-typoscript/main/en-us/TopLevelObjects/Config.html#confval-config-sendcacheheaders) 
 of this setting. Related to this is the setting `config.cache_period`, which 
-[defines](https://docs.typo3.org/m/typo3/reference-typoscript/main/en-us/Setup/Config/Index.html#cache-period) the time
+[defines](https://docs.typo3.org/m/typo3/reference-typoscript/main/en-us/TopLevelObjects/Config.html#confval-config-cache-period) the time
 a page can stay in the backend, and therefor in the browser cache.
 
 **FUN FACT:** The provided `.htaccess` file, which comes with the TYPO3 core, is removing the `ETag` cache header
@@ -111,7 +111,7 @@ won't see this change until 24 hours have passed. Visitors which come to the sam
 have this page in the browser cache, will see the new changed version of the page.
 
 **FUN FACT:** There is a **Tip** at the bottom of the 
-[description](https://docs.typo3.org/m/typo3/reference-typoscript/main/en-us/Setup/Config/Index.html#sendcacheheaders) 
+[description](https://docs.typo3.org/m/typo3/reference-typoscript/main/en-us/TopLevelObjects/Config.html#confval-config-sendcacheheaders) 
 of `config.sendCacheHeaders` mentioning exactly these problems. The solution is ... hold it ... tada: Shift-Reload the 
 page. This is exactly what not to instruct the editors ;-)
 
