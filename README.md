@@ -134,6 +134,10 @@ The `ETag` header is a `md5` hash of the content of a page and will be calculate
 When the HTTP status code `304, Not Modified` is send, no content will be send, keeping the response very small.
 See`Symfony\Component\HttpFoundation`
 
+## IMPORTANT NOTE
+
+When using CSP in TYPO3 with `nonce`, browsers (and TYPO3) will disable client-side caching.
+
 ## More info
 
 You can find a great tutorial on Medium by Alex Barashkov: 

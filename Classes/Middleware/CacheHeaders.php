@@ -6,6 +6,7 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
+use TYPO3\CMS\Core\Context\Exception\AspectNotFoundException;
 use TYPO3\CMS\Core\Http\NullResponse;
 use TYPO3\CMS\Core\Http\Response;
 use TYPO3\CMS\Frontend\Controller\TypoScriptFrontendController;
@@ -41,9 +42,12 @@ class CacheHeaders implements MiddlewareInterface
      * - Return status '200 OK' when ETag has changed (content has changed)
      * - Send header 'cache-control: no-cache'
      *
+     * IMPORTANT NOTE: Keep in mind when using "nonce" the browser (and TYPO3) will disable client side caching.
+     *
      * @param ServerRequestInterface $request
      * @param RequestHandlerInterface $handler
      * @return ResponseInterface
+     * @throws AspectNotFoundException
      */
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
@@ -54,17 +58,15 @@ class CacheHeaders implements MiddlewareInterface
             && (bool)$GLOBALS['TSFE']->config['config']['OpenGemeenten\CmsFrontend.']['sendCacheHeaders'] === true
             && $GLOBALS['TSFE'] instanceof TypoScriptFrontendController
             && $GLOBALS['TSFE']->isStaticCacheble()
-            && !$GLOBALS['TSFE']->isBackendUserLoggedIn()
-            && !$GLOBALS['TSFE']->doWorkspacePreview()
-            && (
-                empty($GLOBALS['TSFE']->config['config']['sendCacheHeaders_onlyWhenLoginDeniedInBranch'])
-                || empty($GLOBALS['TSFE']->checkIfLoginAllowedInBranch())
-            )
+            && !$GLOBALS['TSFE']->getContext()->getPropertyFromAspect('backend.user', 'isLoggedIn', false)
+            && !$GLOBALS['TSFE']->getContext()->getPropertyFromAspect('workspace', 'isOffline', false)
         ) {
             $configuration = $GLOBALS['TSFE']->config['config'];
 
             // If cache headers are set within TYPO3, unset most of them
-            if ((bool)$configuration['sendCacheHeaders'] === true) {
+            if (isset($configuration['sendCacheHeaders'])
+                && (bool)$configuration['sendCacheHeaders'] === true
+            ) {
                 $response = $response->withoutHeader('cache-control');
                 $response = $response->withoutHeader('expires');
                 $response = $response->withoutHeader('pragma');

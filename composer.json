@@ -14,7 +14,7 @@
         }
     ],
     "require": {
-        "typo3/cms-frontend": "^10.4 || ^11.5"
+        "typo3/cms-frontend": "^12.4"
     },
     "extra": {
         "typo3/cms": {
