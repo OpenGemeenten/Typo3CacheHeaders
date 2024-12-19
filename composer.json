@@ -3,9 +3,6 @@
     "type": "typo3-cms-extension",
     "description": "Frontend caching modifications",
     "license": "GPL-3.0+",
-    "replace": {
-        "opengemeenten_cacheheaders": "self.version"
-    },
     "authors": [
         {
             "name": "OpenGemeenten",
